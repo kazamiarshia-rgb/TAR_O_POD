@@ -1,0 +1,233 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="فروشگاه تار و پود، عرضه محصولات دست‌ساز و هنری">
+  <meta name="theme-color" content="#f8f5ef">
+  <title>تار و پود | هنر دست، زیبایی زندگی</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header id="home">
+  <h1>تار و پود</h1>
+  <p>هنر دست، زیبایی زندگی</p>
+</header>
+
+<nav>
+  <a href="#home">صفحه اصلی</a>
+  <a href="#products">محصولات</a>
+  <a href="#cart">سبد خرید</a>
+  <a href="#order">ثبت سفارش</a>
+  <a href="#contact">تماس با ما</a>
+</nav>
+
+<main>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-label">TAR O POD • HANDMADE COLLECTION</div>
+      <h2>زیبایی در جزئیات نهفته است</h2>
+      <p>
+        مجموعه‌ای از محصولات دست‌ساز با عشق، دقت و هنر.
+        برای لحظه‌هایی خاص و خانه‌ای زیباتر.
+      </p>
+      <a href="#products" class="hero-button">مشاهده محصولات</a>
+    </div>
+  </section>
+
+  <section class="intro" id="about">
+    <h2>هنر دست، امضای تار و پود</h2>
+    <p>
+      در تار و پود، زیبایی از دل جزئیات شکل می‌گیرد.
+      ما به هنر دست، اصالت طرح‌های ایرانی و ظرافت در ساخت اهمیت می‌دهیم.
+      هر محصول با دقت انتخاب شده تا گوشه‌ای از زیبایی و سلیقه را به خانه شما بیاورد.
+    </p>
+
+    <div class="intro-features">
+      <div class="intro-feature">
+        <strong>الهام از هنر ایرانی</strong>
+        <span>نگاهی تازه به نقش‌ها و زیبایی‌های اصیل ایرانی</span>
+      </div>
+
+      <div class="intro-feature">
+        <strong>توجه به جزئیات</strong>
+        <span>زیبایی در ظرافت و دقت هر محصول</span>
+      </div>
+
+      <div class="intro-feature">
+        <strong>خرید آسان</strong>
+        <span>مشاهده محصولات و ثبت سفارش در چند مرحله ساده</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="products">
+    <h2>محصولات فروشگاه</h2>
+
+    <div class="product-tools">
+      <h3 class="product-tools-title">جست‌وجو و پیدا کردن محصول</h3>
+
+      <div class="product-tools-row">
+        <input
+          type="search"
+          id="productSearch"
+          placeholder="نام یا توضیحات محصول را بنویسید..."
+          aria-label="جست‌وجوی محصولات"
+        >
+
+        <select id="categoryFilter" aria-label="دسته‌بندی محصولات">
+          <option value="all">همه دسته‌بندی‌ها</option>
+          <option value="کیف">کیف</option>
+          <option value="سبد">سبد و نظم‌دهنده</option>
+          <option value="زیرانداز">زیرانداز و رومیزی</option>
+          <option value="ظرف">ظرف و محصولات تزئینی</option>
+          <option value="سایر">سایر محصولات</option>
+        </select>
+
+        <button type="button" id="clearProductFilters">پاک کردن</button>
+      </div>
+
+      <p id="productResultCount" class="product-result-count">
+        در حال دریافت محصولات...
+      </p>
+    </div>
+
+    <div class="products">
+      <p class="loading">در حال دریافت محصولات...</p>
+    </div>
+  </section>
+
+  <div class="product-modal" id="productModal" aria-hidden="true">
+    <div
+      class="product-modal-content"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="productDetailName"
+    >
+
+      <button
+        type="button"
+        class="product-modal-close"
+        id="closeProductModal"
+        aria-label="بستن"
+      >×</button>
+
+      <div id="productDetailContent">
+        <p>در حال دریافت اطلاعات محصول...</p>
+      </div>
+
+      <section class="reviews-section" id="reviewsSection">
+        <h3>نظرات و امتیاز مشتریان</h3>
+
+        <form class="review-form" id="reviewForm">
+          <strong>نظر شما درباره این محصول چیست؟</strong>
+
+          <div class="review-stars" aria-label="انتخاب امتیاز">
+            <label><input type="radio" name="reviewRating" value="5" required>★</label>
+            <label><input type="radio" name="reviewRating" value="4">★</label>
+            <label><input type="radio" name="reviewRating" value="3">★</label>
+            <label><input type="radio" name="reviewRating" value="2">★</label>
+            <label><input type="radio" name="reviewRating" value="1">★</label>
+          </div>
+
+          <input
+            type="text"
+            id="reviewName"
+            placeholder="نام نمایشی شما"
+            maxlength="50"
+            required
+          >
+
+          <textarea
+            id="reviewComment"
+            placeholder="متن نظر شما..."
+            maxlength="1000"
+            required
+          ></textarea>
+
+          <button type="submit" class="review-submit">ثبت نظر</button>
+
+          <p id="reviewMessage" class="review-message" role="status"></p>
+        </form>
+
+        <div id="reviewList" class="review-list">
+          <p>هنوز نظری برای این محصول ثبت نشده است.</p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <section id="cart">
+    <h2>سبد خرید</h2>
+    <div id="cartItems">سبد خرید خالی است.</div>
+    <h3>مبلغ کل: <span id="total">۰</span> تومان</h3>
+  </section>
+
+  <section id="order">
+    <h2>اطلاعات ثبت سفارش</h2>
+    <p>برای ثبت سفارش، اطلاعات زیر را وارد کنید.</p>
+
+    <form id="orderForm">
+
+      <input
+        type="text"
+        id="customerName"
+        placeholder="نام و نام خانوادگی"
+        required
+      >
+
+      <input
+        type="tel"
+        id="customerPhone"
+        placeholder="شماره تلفن"
+        required
+      >
+
+      <textarea
+        id="customerAddress"
+        placeholder="آدرس کامل گیرنده، شهر، خیابان و پلاک"
+        required
+      ></textarea>
+
+      <input
+        type="text"
+        id="customerPostalCode"
+        placeholder="کد پستی ۱۰ رقمی"
+        inputmode="numeric"
+        maxlength="10"
+        pattern="[0-9۰-۹]{10}"
+        title="کد پستی باید دقیقاً ۱۰ رقم باشد"
+        required
+      >
+
+      <button type="submit" id="submitOrder">
+        ثبت نهایی سفارش
+      </button>
+
+      <p id="orderMessage" role="status"></p>
+    </form>
+  </section>
+
+  <section id="contact">
+    <h2>تماس با ما</h2>
+    <p id="storePhone">در حال دریافت اطلاعات...</p>
+    <a id="whatsappLink" href="#" hidden>ارتباط در واتساپ</a>
+  </section>
+
+</main>
+
+<footer>
+  <p>تار و پود | هنر و خلاقیت</p>
+  <p>ساخته‌شده با عشق به هنر دست</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+
+</body>
+</html>

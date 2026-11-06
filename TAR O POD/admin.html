@@ -1,0 +1,437 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f5f0e8">
+<title>پنل مدیریت | تار و پود</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box}
+:root{
+--bg:#f5f1eb;--surface:#fffdf9;--brown:#75543e;
+--dark:#493629;--text:#40372f;--muted:#918174;
+--border:#e8ded2;--gold:#b58a48;
+--shadow:0 10px 30px rgba(77,54,35,.07)
+}
+body{
+margin:0;padding:22px;font-family:Tahoma,sans-serif;
+background:var(--bg);color:var(--text);line-height:1.8
+}
+.container{max-width:1100px;margin:auto}
+header{
+padding:35px 20px;margin-bottom:24px;border-radius:23px;
+text-align:center;color:#fffaf3;
+background:linear-gradient(135deg,#80634c,#493629);
+box-shadow:0 12px 30px #49362925
+}
+header h1{margin:0;font-size:29px}
+header p{margin:5px 0 0;color:#e6d8c8;font-size:13px}
+.header-label{
+display:inline-block;padding:3px 13px;margin-bottom:10px;
+border:1px solid #ffffff40;border-radius:30px;
+color:#ead9c5;font-size:11px;letter-spacing:2px
+}
+.panel,.login-box{
+padding:25px;margin-bottom:22px;border:1px solid var(--border);
+border-radius:19px;background:var(--surface);box-shadow:var(--shadow)
+}
+.panel h2,.login-box h2{margin:0 0 20px;color:var(--dark);font-size:19px}
+.panel h2::before{
+content:"";display:inline-block;width:5px;height:21px;
+margin-left:9px;vertical-align:middle;border-radius:5px;background:var(--gold)
+}
+input,textarea,select{
+display:block;width:100%;padding:13px;margin:9px 0 17px;
+border:1px solid var(--border);border-radius:11px;outline:none;
+background:#fffefa;color:var(--text);font-family:Tahoma,sans-serif;font-size:13px
+}
+input:focus,textarea:focus,select:focus{
+border-color:#a88a6c;box-shadow:0 0 0 3px #a88a6c20
+}
+textarea{min-height:90px;resize:vertical}
+label{display:block;margin-top:12px;font-size:13px;font-weight:bold}
+button{
+padding:12px 18px;border:none;border-radius:11px;
+background:linear-gradient(135deg,#89694f,#65472f);
+color:white;font-family:Tahoma,sans-serif;font-size:13px;
+cursor:pointer;transition:.2s
+}
+button:hover{filter:brightness(1.08);transform:translateY(-2px)}
+button:disabled{opacity:.6;cursor:not-allowed}
+.danger{background:linear-gradient(135deg,#bd6a5d,#91473d)}
+.secondary{background:linear-gradient(135deg,#a99a89,#786958)}
+.hidden{display:none!important}
+.message{
+padding:12px;margin-top:14px;border-radius:10px;
+background:#f6f0e8;font-size:13px;line-height:2;overflow-wrap:anywhere
+}
+.dashboard-title{margin:10px 0 18px;color:var(--dark);font-size:19px}
+.dashboard-subtitle{margin-top:-12px;margin-bottom:20px;color:var(--muted);font-size:12px}
+.dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.dashboard-card{
+min-height:145px;padding:22px 15px;border:1px solid var(--border);
+border-radius:17px;background:linear-gradient(145deg,#fffdf9,#f3ece3);
+color:var(--dark);text-align:center;box-shadow:0 6px 17px #4936290a;
+cursor:pointer;transition:.2s
+}
+.dashboard-card:hover{border-color:#c5aa8d;background:#f1e7db;transform:translateY(-4px)}
+.card-icon{display:block;margin-bottom:9px;font-size:29px}
+.card-title{display:block;font-size:14px;font-weight:bold}
+.card-description{display:block;margin-top:5px;color:var(--muted);font-size:11px}
+.section-top{
+display:flex;align-items:center;justify-content:space-between;
+flex-wrap:wrap;gap:12px;margin-bottom:18px
+}
+.section-top h2{margin:0}
+.back-button{background:#eee5da;color:var(--dark);box-shadow:none}
+.section-note{color:var(--muted);font-size:12px;line-height:2}
+.product-item,.order-item,.category-item,.review-item,.discount-item{
+padding:17px;margin-top:14px;border:1px solid var(--border);
+border-radius:14px;background:#fffefa
+}
+.product-item img{display:block;width:120px;height:120px;margin-bottom:12px;border-radius:12px;object-fit:cover}
+.product-item p,.order-item p,.review-item p,.discount-item p{
+line-height:2;font-size:13px;overflow-wrap:anywhere
+}
+.product-item button,.order-item button,.category-item button,
+.review-item button,.discount-item button{margin:7px 5px 0 0}
+.category-name{margin-bottom:10px;font-weight:bold}
+.category-actions{display:flex;flex-wrap:wrap;gap:8px}
+.category-actions button{margin:0}
+.status-select{max-width:250px}
+.product-category-select{max-width:350px}
+.review-stars{color:var(--gold);font-size:20px}
+.review-approved{color:#287b52;font-weight:bold}
+.review-pending{color:#a56b27;font-weight:bold}
+.logout-row{display:flex;justify-content:flex-start;margin-bottom:18px}
+.discount-grid{
+display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px
+}
+.discount-grid .full{grid-column:1/-1}
+.discount-item{
+border-color:#e8ded2;background:linear-gradient(145deg,#fffdf9,#f8f2e9)
+}
+.discount-item h3{margin:0 0 8px;color:var(--dark)}
+.discount-status{font-weight:bold}
+.active-status{color:#287b52}
+.inactive-status{color:#a34b42}
+.form-actions{display:flex;gap:10px;flex-wrap:wrap}
+@media(max-width:600px){
+body{padding:12px}
+header{padding:28px 12px;border-radius:17px}
+header h1{font-size:24px}
+.panel,.login-box{padding:17px}
+.dashboard-grid{gap:10px}
+.dashboard-card{min-height:135px;padding:17px 8px}
+.card-title{font-size:12px}
+.card-icon{font-size:25px}
+.section-top{align-items:flex-start}
+.discount-grid{grid-template-columns:1fr}
+.discount-grid .full{grid-column:auto}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+<div class="header-label">TAR O POD • ADMIN PANEL</div>
+<h1>تار و پود</h1>
+<p>مدیریت حرفه‌ای فروشگاه</p>
+</header>
+
+<section id="loginSection" class="login-box">
+<h2>ورود مدیر</h2>
+<form id="loginForm">
+<label for="loginEmail">ایمیل</label>
+<input id="loginEmail" type="email" required>
+<label for="loginPassword">رمز عبور</label>
+<input id="loginPassword" type="password" required>
+<button type="submit">ورود به پنل</button>
+</form>
+<div id="loginMessage" class="message hidden"></div>
+</section>
+
+<main id="adminPanel" class="hidden">
+
+<div class="logout-row">
+<button id="logoutButton" class="danger">خروج از حساب</button>
+</div>
+
+<section id="dashboardSection" class="panel">
+<h2 class="dashboard-title">داشبورد مدیریت</h2>
+<p class="dashboard-subtitle">برای مدیریت هر بخش روی کارت آن کلیک کن.</p>
+
+<div class="dashboard-grid">
+
+<button type="button" class="dashboard-card" data-target="settingsSection">
+<span class="card-icon">⚙️</span>
+<span class="card-title">تنظیمات فروشگاه</span>
+<span class="card-description">نام، توضیحات و اطلاعات تماس</span>
+</button>
+
+<button type="button" class="dashboard-card" data-target="categoriesSection">
+<span class="card-icon">🗂️</span>
+<span class="card-title">دسته‌بندی‌ها</span>
+<span class="card-description">ساخت، ویرایش و حذف دسته‌ها</span>
+</button>
+
+<button type="button" class="dashboard-card" data-target="addProductSection">
+<span class="card-icon">➕</span>
+<span class="card-title">افزودن محصول</span>
+<span class="card-description">ثبت محصول جدید در فروشگاه</span>
+</button>
+
+<button type="button" class="dashboard-card" data-target="productsSection">
+<span class="card-icon">🧺</span>
+<span class="card-title">مدیریت محصولات</span>
+<span class="card-description">مشاهده و ویرایش محصولات</span>
+</button>
+
+<button type="button" class="dashboard-card" data-target="reviewsSection">
+<span class="card-icon">⭐</span>
+<span class="card-title">مدیریت نظرات</span>
+<span class="card-description">بررسی و تأیید نظر مشتریان</span>
+</button>
+
+<button type="button" class="dashboard-card" data-target="ordersSection">
+<span class="card-icon">📦</span>
+<span class="card-title">مدیریت سفارش‌ها</span>
+<span class="card-description">پیگیری و تغییر وضعیت سفارش‌ها</span>
+</button>
+
+<button type="button" class="dashboard-card" data-target="discountsSection">
+<span class="card-icon">🎟️</span>
+<span class="card-title">مدیریت کدهای تخفیف</span>
+<span class="card-description">ساخت و مدیریت تخفیف‌ها</span>
+</button>
+
+</div>
+</section>
+
+<section id="settingsSection" class="panel admin-section hidden">
+<div class="section-top">
+<h2>تنظیمات فروشگاه</h2>
+<button type="button" class="back-button">← بازگشت به داشبورد</button>
+</div>
+<form id="settingsForm">
+<label for="storeName">نام فروشگاه</label>
+<input id="storeName" type="text" required>
+<label for="storeDescription">توضیحات فروشگاه</label>
+<textarea id="storeDescription"></textarea>
+<label for="storePhone">شماره تماس</label>
+<input id="storePhone" type="text">
+<label for="storeWhatsapp">شماره واتساپ</label>
+<input id="storeWhatsapp" type="text">
+<label for="productColumns">تعداد ستون محصولات در سایت مشتری</label>
+<select id="productColumns">
+<option value="1">۱ ستون</option>
+<option value="2">۲ ستون</option>
+<option value="3">۳ ستون</option>
+<option value="4">۴ ستون</option>
+<option value="5">۵ ستون</option>
+<option value="6">۶ ستون</option>
+</select>
+<button type="submit">ذخیره تنظیمات</button>
+</form>
+<div id="settingsMessage" class="message hidden"></div>
+</section>
+
+<section id="categoriesSection" class="panel admin-section hidden">
+<div class="section-top">
+<h2>مدیریت دسته‌بندی‌ها</h2>
+<button type="button" class="back-button">← بازگشت به داشبورد</button>
+</div>
+<p class="section-note">دسته‌بندی‌های دلخواهت را بساز، ویرایش یا حذف کن.</p>
+<form id="categoryForm">
+<label for="categoryName">نام دسته‌بندی جدید</label>
+<input id="categoryName" type="text" placeholder="مثلاً کیف، سبد، زیرانداز..." maxlength="60" required>
+<button type="submit">افزودن دسته‌بندی</button>
+</form>
+<div id="categoryMessage" class="message hidden"></div>
+<h3>دسته‌بندی‌های ثبت‌شده</h3>
+<div id="categoryList">در حال دریافت دسته‌بندی‌ها...</div>
+</section>
+
+<section id="addProductSection" class="panel admin-section hidden">
+<div class="section-top">
+<h2>افزودن محصول جدید</h2>
+<button type="button" class="back-button">← بازگشت به داشبورد</button>
+</div>
+<form id="productForm">
+<label for="productName">نام محصول</label>
+<input id="productName" type="text" required>
+<label for="productDescription">توضیحات محصول</label>
+<textarea id="productDescription"></textarea>
+<label for="productPrice">قیمت محصول به تومان</label>
+<input id="productPrice" type="number" min="0" required>
+<label for="productCategory">دسته‌بندی محصول</label>
+<select id="productCategory"><option value="">بدون دسته‌بندی</option></select>
+<label for="productImage">تصویر محصول</label>
+<input id="productImage" type="file" accept="image/*" required>
+<button type="submit">ثبت محصول</button>
+</form>
+<div id="productMessage" class="message hidden"></div>
+</section>
+
+<section id="productsSection" class="panel admin-section hidden">
+<div class="section-top">
+<h2>مدیریت محصولات</h2>
+<button type="button" class="back-button">← بازگشت به داشبورد</button>
+</div>
+<div id="productList">در حال دریافت محصولات...</div>
+</section>
+
+<section id="reviewsSection" class="panel admin-section hidden">
+<div class="section-top">
+<h2>مدیریت نظرات مشتریان</h2>
+<button type="button" class="back-button">← بازگشت به داشبورد</button>
+</div>
+<p class="section-note">نظرهای جدید را بررسی کن و درباره نمایش آن‌ها تصمیم بگیر.</p>
+<div id="reviews">در حال دریافت نظرات...</div>
+</section>
+
+<section id="ordersSection" class="panel admin-section hidden">
+<div class="section-top">
+<h2>مدیریت سفارش‌ها</h2>
+<button type="button" class="back-button">← بازگشت به داشبورد</button>
+</div>
+<div id="orders">در حال دریافت سفارش‌ها...</div>
+</section>
+
+<section id="discountsSection" class="panel admin-section hidden">
+<div class="section-top">
+<h2>🎟️ مدیریت کدهای تخفیف</h2>
+<button type="button" class="back-button">← بازگشت به داشبورد</button>
+</div>
+
+<p class="section-note">
+ساخت و مدیریت کدهای تخفیف فروشگاه تار و پود
+</p>
+
+<form id="discountForm">
+
+<input type="hidden" id="discountId">
+
+<div class="discount-grid">
+
+<div>
+<label for="discountCode">متن کد تخفیف</label>
+<input id="discountCode" type="text" maxlength="40"
+placeholder="مثلاً TAROPOD20" required>
+</div>
+
+<div>
+<label for="discountType">نوع تخفیف</label>
+<select id="discountType">
+<option value="percent">درصدی</option>
+<option value="fixed">مبلغ ثابت</option>
+</select>
+</div>
+
+<div>
+<label for="discountValue">مقدار تخفیف</label>
+<input id="discountValue" type="number" min="1" required>
+</div>
+
+<div>
+<label for="discountMinOrder">حداقل مبلغ سفارش (تومان)</label>
+<input id="discountMinOrder" type="number" min="0" value="0">
+</div>
+
+<div>
+<label for="discountMaxCustomers">حداکثر تعداد مشتریان متفاوت</label>
+<input id="discountMaxCustomers" type="number" min="1"
+placeholder="خالی یعنی نامحدود">
+</div>
+
+<div>
+<label for="discountMaxUses">حداکثر کل دفعات استفاده</label>
+<input id="discountMaxUses" type="number" min="1"
+placeholder="خالی یعنی نامحدود">
+</div>
+
+<div>
+<label for="discountPerUserLimit">دفعات مجاز برای هر مشتری</label>
+<input id="discountPerUserLimit" type="number" min="1" value="1" required>
+</div>
+
+<div>
+<label for="discountStartsAt">تاریخ و ساعت شروع</label>
+<input id="discountStartsAt" type="datetime-local">
+</div>
+
+<div>
+<label for="discountExpiresAt">تاریخ و ساعت پایان</label>
+<input id="discountExpiresAt" type="datetime-local">
+</div>
+
+<div>
+<label for="discountActive">وضعیت کد</label>
+<select id="discountActive">
+<option value="true">فعال</option>
+<option value="false">غیرفعال</option>
+</select>
+</div>
+
+</div>
+
+<div class="form-actions">
+<button type="submit" id="discountSubmitButton">ثبت کد تخفیف</button>
+<button type="button" id="discountCancelButton" class="secondary">پاک کردن فرم</button>
+</div>
+
+</form>
+
+<div id="discountMessage" class="message hidden"></div>
+
+<h3>کدهای تخفیف ثبت‌شده</h3>
+<div id="discountList">کدهای تخفیف در این قسمت نمایش داده می‌شوند.</div>
+
+</section>
+
+</main>
+</div>
+
+<script src="admin.js"></script>
+
+<script>
+const dashboard=document.getElementById("dashboardSection");
+const sections=document.querySelectorAll(".admin-section");
+const cards=document.querySelectorAll(".dashboard-card");
+const backButtons=document.querySelectorAll(".back-button");
+
+function showDashboardSection(sectionId){
+dashboard.classList.add("hidden");
+sections.forEach(section=>section.classList.add("hidden"));
+const selectedSection=document.getElementById(sectionId);
+if(selectedSection){
+selectedSection.classList.remove("hidden");
+window.scrollTo({top:0,behavior:"smooth"});
+}
+}
+
+function returnToDashboard(){
+sections.forEach(section=>section.classList.add("hidden"));
+dashboard.classList.remove("hidden");
+window.scrollTo({top:0,behavior:"smooth"});
+}
+
+cards.forEach(card=>{
+card.addEventListener("click",()=>{
+showDashboardSection(card.dataset.target);
+});
+});
+
+backButtons.forEach(button=>{
+button.addEventListener("click",returnToDashboard);
+});
+</script>
+
+</body>
+</html>
